@@ -4,9 +4,8 @@ set -e # immediately if a command exits with a non-zero status.
 source config
 
 PKG+=" uhttpd"
-PKG+=" php7"
-PKG+=" php7-cgi"
-PKG+=" openssh-sftp-server"
+PKG+=" php7 php7-cgi zoneinfo-europe php5-mod-json"
+# PKG+=" openssh-sftp-server"
 PKG+=" iwinfo"
 PKG+=" rsync"
 PKG+=" kmod-usb-acm"
