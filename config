@@ -1,0 +1,9 @@
+#!/bin/bash
+
+RELEASE="18.06.0-rc1"
+DEVICE=tplink_tl-wr902ac-v3
+ARCH=ramips
+VARIANT=mt76x8
+SDK_URL=https://downloads.openwrt.org/releases/${RELEASE}/targets/${ARCH}/${VARIANT}/openwrt-sdk-${RELEASE}-${ARCH}-${VARIANT}_gcc-7.3.0_musl.Linux-x86_64.tar.xz
+IMAGE_BUILDER_URL=https://downloads.openwrt.org/releases/${RELEASE}/targets/${ARCH}/${VARIANT}/openwrt-imagebuilder-${RELEASE}-${ARCH}-${VARIANT}.Linux-x86_64.tar.xz
+

@@ -1,12 +1,6 @@
 #!/bin/bash
 set -e # exit in case of errors
-
-RELEASE="18.06.0-rc1"
-DEVICE=tplink_tl-wr902ac-v3
-ARCH=ramips
-VARIANT=mt76x8
-SDK_URL=https://downloads.openwrt.org/releases/${RELEASE}/targets/${ARCH}/${VARIANT}/openwrt-sdk-${RELEASE}-${ARCH}-${VARIANT}_gcc-7.3.0_musl.Linux-x86_64.tar.xz
-IMAGE_BUILDER_URL=https://downloads.openwrt.org/releases/${RELEASE}/targets/${ARCH}/${VARIANT}/openwrt-imagebuilder-${RELEASE}-${ARCH}-${VARIANT}.Linux-x86_64.tar.xz
+source config
 
 echo preparing 'sdk'...
 if [ ! -e sdk ]; then
@@ -20,3 +14,4 @@ if [ ! -e imagebuilder ]; then
   wget -qO- $IMAGE_BUILDER_URL | xz -d | tar x --strip-components=1 -C imagebuilder
 fi
 
+sdk/scripts/feeds update -a

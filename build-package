@@ -2,10 +2,17 @@
 set -e # exit in case of errors
 
 if [[ $# -eq 0 ]] ; then
-    echo 'Usage: ./build-packages package1 [package2] [...]'
+    echo 'Usage: ./build-package [-v] package1 [package2] [...]'
     exit 1
 fi
 
+# -v can only be used as the 1st param
+if [[ "$1" == "-v" ]] ; then
+  verbose="V=s"
+  shift
+fi
+
+# add customfeeds to feeds.conf
 echo adding "\"src-link customfeeds `pwd`/customfeeds\" to \"sdk/feeds.conf\""
 cp sdk/feeds.conf.default sdk/feeds.conf
 echo "src-link customfeeds `pwd`/customfeeds" >> sdk/feeds.conf
@@ -13,15 +20,17 @@ echo "src-link customfeeds `pwd`/customfeeds" >> sdk/feeds.conf
 # remove previous packages
 rm -f sdk/bin/packages/*/customfeeds/*.ipk
 
-sdk/scripts/feeds update -a
+# only update customfeeds
+sdk/scripts/feeds update -p customfeeds
 
+# loop over supplied arguments
 for i in $*; do
   echo "package: $i"
   sdk/scripts/feeds install $i
-  make -C sdk package/$i/compile #V=s 
+  make $verbose -C sdk package/$i/compile
 done
 
-
+# show result
 echo DONE!
 ls -R sdk/bin/packages/*/customfeeds
 
