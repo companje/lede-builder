@@ -1,21 +1,61 @@
 #!/bin/sh
 
-#using LAN for both Ethernet and Wireless AccessPoint
+# overwrite /etc/config/network
+cat > /etc/config/network << EOF
+config interface 'loopback'
+	option ifname 'lo'
+	option proto 'static'
+	option ipaddr '127.0.0.1'
+	option netmask '255.0.0.0'
 
-# LAN interface
-uci set network.lan.ipaddr=192.168.10.1
-uci set network.lan.netmask=255.255.255.0
-uci set network.lan.proto=static
+config globals 'globals'
+	option ula_prefix 'fd97:28f0:4724::/48'
 
-# wwan - wireless WAN interface
-uci set network.wwan=interface
-uci set network.wwan.proto=dhcp
+config interface 'lan'
+	option proto 'static'
+	option netmask '255.255.255.0'
+	option ipaddr '192.168.10.1'
 
-# AccessPoint
-uci delete wireless.@wifi-device[0].disabled
-uci set wireless.@wifi-iface[0].ssid=Doodle3D
-uci set wireless.@wifi-iface[0].key=1234567890
-uci set wireless.@wifi-iface[0].encryption=psk2
+config interface 'wwan'
+	option proto 'dhcp'
+EOF
+
+# overwrite /etc/config/wireless
+cat > /etc/config/wireless << EOF
+config wifi-device 'radio0'
+	option type 'mac80211'
+	option channel '11'
+	option hwmode '11g'
+	option path 'platform/10300000.wmac'
+	option htmode 'HT20'
+
+config wifi-iface 'ap'
+	option device 'radio0'
+	option network 'lan'
+	option mode 'ap'
+	option ssid 'Doodle3D'
+	option key '1234567890'
+	option encryption 'psk2'
+
+config wifi-iface 'sta'
+	option device 'radio0'
+	option network 'wwan'
+	option mode 'sta'
+	option ssid ''
+	option key ''
+	option encryption 'psk2'
+	option disabled '1'
+EOF
+
+# Make webserver accessible from WAN / WWAN
+cat >> /etc/config/firewall << EOF
+config redirect
+	option src wan
+	option src_dport 80
+	option proto tcp
+	option dest lan
+	option dest_ip 192.168.10.1
+EOF
 
 # dhcp
 uci set dhcp.@dnsmasq[0].rebind_protection=0
@@ -32,28 +72,6 @@ uci set system.@system[0].hostname=Doodle3D
 
 # save settings
 uci commit
-
-# WiFi client
-cat >> /etc/config/wireless << EOF
-config wifi-iface
-	option disabled 1
-	option device 'radio0'
-	option network 'wwan'
-	option mode 'sta'
-	option ssid ''
-	option key ''
-	option encryption 'psk2'
-EOF
-
-# Make webserver accessible from WAN / WWAN
-cat >> /etc/config/firewall << EOF
-config redirect
-	option src       wan
-	option src_dport 80
-	option proto     tcp
-	option dest      lan
-	option dest_ip   192.168.10.1
-EOF
 
 exit 0
 

@@ -1,0 +1,10 @@
+#!/bin/sh
+
+# logger "iface: ACTION=$ACTION -- DEVICE=$DEVICE -- INTERFACE=$INTERFACE"
+
+[ "$ACTION" = "ifup-failed" ] && {
+  logger "ifup-failed -> disable STA"
+  uci set wireless.sta.disabled=1
+  uci commit
+  wifi
+}
