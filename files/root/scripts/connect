@@ -1,0 +1,10 @@
+killall -9 print3d
+
+for i in /dev/ttyUSB*; do
+  echo connecting to $i...
+  print3d -p ultimaker -d $i >null &
+done
+
+sleep 20
+./stop-all
+./id-all

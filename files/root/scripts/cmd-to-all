@@ -1,0 +1,4 @@
+for i in /dev/ttyUSB*; do
+  echo $i: $*
+  p3d -d $i -c "$*" >/dev/null
+done

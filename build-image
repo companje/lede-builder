@@ -12,10 +12,10 @@ PKG+=" rsync"
 PKG+=" kmod-usb-acm"
 PKG+=" kmod-usb-serial-ch341"
 # PKG+=" libstdcpp"
-# PKG+=" print3d"
+PKG+=" print3d"
 PKG+=" avahi-daemon-service-http"
 
-# make -C imagebuilder image PROFILE=${DEVICE} PACKAGES="$PKG" FILES=../../files
+make -C imagebuilder image PROFILE=${DEVICE} PACKAGES="$PKG" FILES=../../files
 
 ls -R imagebuilder/bin/targets/${ARCH}/${VARIANT}
 
@@ -23,15 +23,3 @@ firmware=imagebuilder/bin/targets/${ARCH}/${VARIANT}/openwrt-${RELEASE}-${ARCH}-
 
 ln -fs "../$firmware" bin/
 ln -fs "../$firmware" bin/latest.bin
-
-# create symlinks
-# pushd bin
-# ln -s ../${FIRMWARE_FOLDER}/${FIRMWARE_NAME} .
-# ln -s ../${FIRMWARE_FOLDER}/${FIRMWARE_NAME} latest.bin
-# popd
-
-
-
-
-
-

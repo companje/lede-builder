@@ -34,3 +34,6 @@ done
 echo DONE!
 ls -R sdk/bin/packages/*/customfeeds
 
+# copy the result to the image builder
+cp sdk/bin/packages/*/customfeeds/*.ipk imagebuilder/packages/
+

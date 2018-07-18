@@ -1,0 +1,60 @@
+#!/bin/sh
+
+#using LAN for both Ethernet and Wireless AccessPoint
+
+# LAN interface
+uci set network.lan.ipaddr=192.168.10.1
+uci set network.lan.netmask=255.255.255.0
+uci set network.lan.proto=static
+
+# wwan - wireless WAN interface
+uci set network.wwan=interface
+uci set network.wwan.proto=dhcp
+
+# AccessPoint
+uci delete wireless.@wifi-device[0].disabled
+uci set wireless.@wifi-iface[0].ssid=Doodle3D
+uci set wireless.@wifi-iface[0].key=1234567890
+uci set wireless.@wifi-iface[0].encryption=psk2
+
+# dhcp
+uci set dhcp.@dnsmasq[0].rebind_protection=0
+
+# firewall
+uci add_list firewall.@zone[1].network=wwan    # zone 1 should be the zone with name 'wan'
+
+# uhttpd
+uci add_list uhttpd.main.interpreter=".php=/usr/bin/php-cgi"  # unfortunately this removes all comments from /etc/config/uhttpd
+uci set uhttpd.main.index_page="index.html index.php"
+
+# hostname
+uci set system.@system[0].hostname=Doodle3D
+
+# save settings
+uci commit
+
+# WiFi client
+cat >> /etc/config/wireless << EOF
+config wifi-iface
+	option disabled 1
+	option device 'radio0'
+	option network 'wwan'
+	option mode 'sta'
+	option ssid ''
+	option key ''
+	option encryption 'psk2'
+EOF
+
+# Make webserver accessible from WAN / WWAN
+cat >> /etc/config/firewall << EOF
+config redirect
+	option src       wan
+	option src_dport 80
+	option proto     tcp
+	option dest      lan
+	option dest_ip   192.168.10.1
+EOF
+
+exit 0
+
+

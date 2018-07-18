@@ -1,0 +1,5 @@
+for i in /dev/ttyUSB*; do
+  id="Doodle3D printer ${i:11:1}"
+  echo $i: M117 $id
+  p3d -d $i -c "M117 $id" >/dev/null
+done
