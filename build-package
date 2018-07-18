@@ -1,0 +1,27 @@
+#!/bin/bash
+set -e # exit in case of errors
+
+if [[ $# -eq 0 ]] ; then
+    echo 'Usage: ./build-packages package1 [package2] [...]'
+    exit 1
+fi
+
+echo adding "\"src-link customfeeds `pwd`/customfeeds\" to \"sdk/feeds.conf\""
+cp sdk/feeds.conf.default sdk/feeds.conf
+echo "src-link customfeeds `pwd`/customfeeds" >> sdk/feeds.conf
+
+# remove previous packages
+rm -f sdk/bin/packages/*/customfeeds/*.ipk
+
+sdk/scripts/feeds update -a
+
+for i in $*; do
+  echo "package: $i"
+  sdk/scripts/feeds install $i
+  make -C sdk package/$i/compile #V=s 
+done
+
+
+echo DONE!
+ls -R sdk/bin/packages/*/customfeeds
+
