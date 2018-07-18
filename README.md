@@ -1,7 +1,10 @@
 # LEDE builder
 
 # Usage
+- check and/or edit `config`
 - run `./setup`. It will download the SDK and the ImageBuilder
-- add your own packages into the customfeeds folder
+- add your own packages into the `customfeeds` folder
 - `./build-package my-package` to have the SDK build your package(s) in `customfeeds`
-- to be continued...
+- edit `build-image` if needed
+- run `build-image`
+- check the (symlink) result in `bin`
