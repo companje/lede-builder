@@ -1,0 +1,66 @@
+<style>
+  #info {
+    width: 500px;
+    height: 400px;
+  }
+</style>
+
+<script src="/js/jquery-3.3.1.min.js"></script>
+
+<script>
+
+function debug(cmd) {
+  get(cmd, function(data) {
+    $("#info").val(data);
+  });
+}
+
+function get(cmd, cb) {
+  $.getJSON("server.php?"+cmd, function(data) {
+    if (cb) cb(data);
+  });
+}
+
+function scan() {
+ get("scan", function(data) {
+   $.each(data, function(index, item) {
+     $("#networks").append($("<option>"+item+"</option>"));
+   });
+  }); 
+}
+
+function connect(ssid, key) {
+  var data = {
+    action: "connect",
+    ssid: ssid,
+    key: key
+  }
+  $.post("server.php", data, function( data ) {
+    $("#info").val(data);
+  });
+
+
+}
+
+
+</script>
+
+<button onclick="debug('info')">get WiFi info</button>
+
+<button onclick="debug('disableSTA')">disable STA</button>
+<button onclick="debug('enableSTA')">enable STA</button>
+<hr/>
+<fieldset>
+<select id="networks" onchange="$(network).val(this.value)"><option></option></select>
+<button onclick="scan()">scan</button><br/>
+<input id="network" type="text" placeholder="network"/><br/>
+<input id="key" type="text" placeholder="key"/><br/>
+<button onclick="connect(network.value, key.value)">connect</button>
+</fieldset>
+
+<br/><br/>
+<textarea id="info"></textarea>
+
+<script>
+scan();
+</script>
